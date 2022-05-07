@@ -85,7 +85,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.centrovaccinale.centrovaccinale/com.centrovaccinale.centrovaccinale.HelloApplication
+                                com.centrovaccinale.centrovaccinale/com.centrovaccinale.centrovaccinale.grafica.configurazione.main.ConfigurazioneApplication
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
