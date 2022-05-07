@@ -24,7 +24,7 @@ public class ServerApplication extends Application {
     public void start(Stage primaryStage) throws IOException {
         System.out.println("Entro nello start() di ServerApplication");
         // Caricamento del file fxml
-        Parent root = FXMLLoader.load((Objects.requireNonNull(getClass().getResource("/com/centrovaccinale/server/ServerView.fxml"))));
+        Parent root = FXMLLoader.load((Objects.requireNonNull(getClass().getResource("/com/centrovaccinale/centrovaccinale/server/ServerView.fxml"))));
         //FXMLLoader fxmlLoader = new FXMLLoader(ConfigurazioneApplication.class.getResource("configurazione/ConfigurazioneView.fxml"));
 
         // Tale file lo inizializziamo nella scena
