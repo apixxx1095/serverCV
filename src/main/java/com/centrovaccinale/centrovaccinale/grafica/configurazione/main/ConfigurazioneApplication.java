@@ -23,7 +23,7 @@ public class ConfigurazioneApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         // Caricamento del file fxml
-        Parent root = FXMLLoader.load((Objects.requireNonNull(getClass().getResource("/com/centrovaccinale/configurazione/ConfigurazioneView.fxml"))));
+        Parent root = FXMLLoader.load((Objects.requireNonNull(getClass().getResource("/com/centrovaccinale/centrovaccinale/configurazione/ConfigurazioneView.fxml"))));
         //FXMLLoader fxmlLoader = new FXMLLoader(ConfigurazioneApplication.class.getResource("configurazione/ConfigurazioneView.fxml"));
 
         // Tale file lo inizializziamo nella scena

@@ -25,7 +25,6 @@ public class ServerController implements Initializable {
     private synchronized void cleanConsole(ActionEvent actionEvent){
         System.out.println("Eseguo cleanConsole()\n");
         consoleLogs.setText("");
-        consoleLogs.appendText("");
     }
 
     @Override
