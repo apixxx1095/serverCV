@@ -28,29 +28,18 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private static int numConnessioni = 0;
     private static final long serialVersionUID = 1L;
     private final List<Client> listClients = new ArrayList<>();
-    private static ServerController serverController;
+    private final ServerController serverController;
 
     /**
      * Il metodo costruttore rende pubblico il server.
      * @throws IOException Nel caso in cui ci siano problemi.
+     * @param serverController Riferimento al controller dell'interfaccia grafica.
      */
-    public ServerImpl() throws IOException {
+    public ServerImpl(ServerController serverController) throws IOException {
         super();
+        this.serverController = serverController;
     }
 
-    /**
-     * Metodo che imposta il riferimento al controller che contiene il label in cui
-     * vengono indicati il numero di client connessi e il textArea che serve
-     * da console.
-     * @param serverController Riferimento del controller.
-     */
-    public synchronized static void setServerController(ServerController serverController){
-        ServerImpl.serverController = serverController;
-    }
-
-    private synchronized static ServerController getServerController(){
-        return serverController;
-    }
     private synchronized static void aumentaNumConnessioni(){
         ++numConnessioni;
     }
@@ -66,14 +55,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public synchronized boolean verifyConnection(Client remoteClient) throws RemoteException {
         System.out.println("Ping da parte di: " + remoteClient + "\n");
-        getServerController().getConsoleLogs().appendText("Ping da parte di " + remoteClient + "\n\n");
+        serverController.getConsoleLogs().appendText("Ping da parte di " + remoteClient + "\n\n");
         return true;
     }
 
     @Override
     public synchronized boolean connectionOK(Client remoteClient) throws RemoteException {
         System.out.println("Sever: connesso il client - " + remoteClient);
-        getServerController().getConsoleLogs().appendText("Sever: connesso il client - " + remoteClient + "\n\n");
+        serverController.getConsoleLogs().appendText("Sever: connesso il client - " + remoteClient + "\n\n");
         return addClient(remoteClient);
     }
 
@@ -82,7 +71,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             listClients.add(remoteClient);
             aumentaNumConnessioni();
             System.out.println("Numero di client attualmente connessi: " + getNumConnessioni() + "\n");
-            getServerController().getCounterClientLabel().setText(listClients.size() + "");
+            serverController.getCounterClientLabel().setText(listClients.size() + "");
             return true;
         }else {
             System.out.println("Server: non aggiunto il client " + remoteClient);
@@ -98,8 +87,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             System.out.println("Server: rimosso il client - " + remoteClient);
             decrementaNumConnessioni();
             System.out.println("Numero di client attualmente connessi: " + getNumConnessioni() + "\n");
-            getServerController().getCounterClientLabel().setText(listClients.size() + "");
-            getServerController().getConsoleLogs().appendText("Sever: rimosso il client - " + remoteClient + "\n\n");
+            serverController.getCounterClientLabel().setText(listClients.size() + "");
+            serverController.getConsoleLogs().appendText("Sever: rimosso il client - " + remoteClient + "\n\n");
         }else{
             System.err.println("Accaduto un errore nel remoteClient()");
         }
@@ -113,7 +102,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("**** " + remoteClient + " effettua operazione di registrazione centro vaccinale ****");
         boolean esito = false;
 
-        getServerController().getConsoleLogs().appendText(remoteClient + " - effettua operazione di \"Registrazione Centro Vaccinale\"\n");
+        serverController.getConsoleLogs().appendText(remoteClient + " - effettua operazione di \"Registrazione Centro Vaccinale\"\n");
 
         String query = "" +
                 "INSERT INTO CentriVaccinali(" +
@@ -139,13 +128,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         statement.setString(8, centroVaccinale.getTipologia());
 
         System.out.println("Query:\n" + statement + "\n");
-        getServerController().getConsoleLogs().appendText("Query:\n" + statement + "\n");
+        serverController.getConsoleLogs().appendText("Query:\n" + statement + "\n");
 
         if(connectDB.insertQuery(statement)){
             esito = true;
-            getServerController().getConsoleLogs().appendText("Registrazione centro vaccinale andata a buon fine!\n\n");
+            serverController.getConsoleLogs().appendText("Registrazione centro vaccinale andata a buon fine!\n\n");
         }else{
-            getServerController().getConsoleLogs().appendText("Registrazione centro vaccinale non andata a buon fine!\n\n");
+            serverController.getConsoleLogs().appendText("Registrazione centro vaccinale non andata a buon fine!\n\n");
         }
         return esito;
     }
@@ -156,7 +145,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("**** " + remoteClient + " - effettua operazione di Registrazione Cittadino Vaccinato ****");
         boolean esito = false;
 
-        getServerController().getConsoleLogs().appendText(remoteClient + " - effettua operazione di \"Registrazione Cittadino Vaccinato\"\n");
+        serverController.getConsoleLogs().appendText(remoteClient + " - effettua operazione di \"Registrazione Cittadino Vaccinato\"\n");
 
         String query = "" +
                 "INSERT INTO Vaccinati(" +
@@ -181,13 +170,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         statement.setShort(7, cittadinoVaccinato.getIdVaccinazione());
 
         System.out.println("Query:\n" + statement + "\n");
-        getServerController().getConsoleLogs().appendText("Query:\n" + statement + "\n");
+        serverController.getConsoleLogs().appendText("Query:\n" + statement + "\n");
 
         if(connectDB.insertQuery(statement)){
             esito = true;
-            getServerController().getConsoleLogs().appendText("Registrazione cittadino vaccinato andata a buon fine!\n\n");
+            serverController.getConsoleLogs().appendText("Registrazione cittadino vaccinato andata a buon fine!\n\n");
         }else{
-            getServerController().getConsoleLogs().appendText("Registrazione cittadino vaccinato non andata a buon fine!\n\n");
+            serverController.getConsoleLogs().appendText("Registrazione cittadino vaccinato non andata a buon fine!\n\n");
         }
         return esito;
     }
@@ -198,7 +187,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("**** " + remoteClient + " - effettua operazione di registrazione a sistema ****");
         boolean esito = false;
 
-        getServerController().getConsoleLogs().appendText(remoteClient + " - effettua operazione di \"Registrazione cittadino\"\n");
+        serverController.getConsoleLogs().appendText(remoteClient + " - effettua operazione di \"Registrazione cittadino\"\n");
 
         String query = "" +
                 "INSERT INTO CittadiniRegistrati(" +
@@ -223,13 +212,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         statement.setShort(7, cittadinoRegistrato.getIdVaccinazione());
 
         System.out.println("Query:\n" + statement + "\n");
-        getServerController().getConsoleLogs().appendText("Query:\n" + statement + "\n");
+        serverController.getConsoleLogs().appendText("Query:\n" + statement + "\n");
 
         if(connectDB.insertQuery(statement)){
             esito = true;
-            getServerController().getConsoleLogs().appendText("Registrazione cittadino andata a buon fine!\n\n");
+            serverController.getConsoleLogs().appendText("Registrazione cittadino andata a buon fine!\n\n");
         }else{
-            getServerController().getConsoleLogs().appendText("Registrazione cittadino non andata a buon fine!\n\n");
+            serverController.getConsoleLogs().appendText("Registrazione cittadino non andata a buon fine!\n\n");
         }
         return esito;
     }
@@ -239,7 +228,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("**** " + remoteClient + " - effettua operazione di registrazione evento avverso ****");
         boolean esito = false;
 
-        getServerController().getConsoleLogs().appendText(remoteClient + " - effettua operazione di \"Registrazione Evento Avverso\"\n");
+        serverController.getConsoleLogs().appendText(remoteClient + " - effettua operazione di \"Registrazione Evento Avverso\"\n");
 
         String query = "" +
                 "INSERT INTO EventiAvversi(" +
@@ -258,13 +247,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         statement.setString(4, eventoAvverso.getNote());
 
         System.out.println("Query:\n " + statement + "\n");
-        getServerController().getConsoleLogs().appendText("Query:\n" + statement + "\n");
+        serverController.getConsoleLogs().appendText("Query:\n" + statement + "\n");
 
         if(connectDB.insertQuery(statement)){
             esito = true;
-            getServerController().getConsoleLogs().appendText("Registrazione evento avverso andata a buon fine!\n\n");
+            serverController.getConsoleLogs().appendText("Registrazione evento avverso andata a buon fine!\n\n");
         }else{
-            getServerController().getConsoleLogs().appendText("Registrazione evento avverso non andata a buon fine!\n\n");
+            serverController.getConsoleLogs().appendText("Registrazione evento avverso non andata a buon fine!\n\n");
         }
         return esito;
     }
@@ -274,7 +263,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("**** " + remoteClient + " - effettua operazione di Login ****");
         boolean esito = false;
 
-        getServerController().getConsoleLogs().appendText(remoteClient + " - effettua operazione di \"Login\"\n");
+        serverController.getConsoleLogs().appendText(remoteClient + " - effettua operazione di \"Login\"\n");
 
         String query = "" +
                 "SELECT userid, password\n" +
@@ -290,7 +279,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         statement.setString(1, username);
 
         System.out.println("Query:\n" + statement + "\n");
-        getServerController().getConsoleLogs().appendText("Query:\n" + statement + "\n");
+        serverController.getConsoleLogs().appendText("Query:\n" + statement + "\n");
 
         ResultSet resultSet = connectDB.selectQuery(statement);
 
@@ -302,10 +291,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
         if(usernameResult != null && passwordResult != null){
             if (username.equals(usernameResult) && password.equals(passwordResult)){
-                getServerController().getConsoleLogs().appendText("Operazione di login andata a buon fine!\n\n");
+                serverController.getConsoleLogs().appendText("Operazione di login andata a buon fine!\n\n");
                 esito = true;
             }else {
-                getServerController().getConsoleLogs().appendText("Operazione di login non andata a buon fine!\n\n");
+                serverController.getConsoleLogs().appendText("Operazione di login non andata a buon fine!\n\n");
             }
         }
         return esito;
@@ -316,7 +305,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("**** " + remoteClient + " - effettua operazione di ricerca per nome ****");
         List<String> listaCentri = new ArrayList<>();
 
-        getServerController().getConsoleLogs().appendText(remoteClient + " - effettua operazione di \"Ricerca per nome\"\n");
+        serverController.getConsoleLogs().appendText(remoteClient + " - effettua operazione di \"Ricerca per nome\"\n");
 
         String query = "" +
                 "SELECT nomecentro\n" +
@@ -329,7 +318,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         statement.setString(1, nomeCentro);
 
         System.out.println("Query:\n" + statement + "\n");
-        getServerController().getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
+        serverController.getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
 
         ResultSet resultSet = connectDB.selectQuery(statement);
         while (resultSet.next()){
@@ -345,7 +334,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("**** " + remoteClient + " - richiede un riepilogo per il centro \"" + nomeCentro + "\" ****");
         List<RiepilogoEventi> listaRiepilogo = new ArrayList<>();
 
-        getServerController().getConsoleLogs().appendText(remoteClient + " - richiede un riepilogo per il centro: \"" + nomeCentro + "\"\n");
+        serverController.getConsoleLogs().appendText(remoteClient + " - richiede un riepilogo per il centro: \"" + nomeCentro + "\"\n");
 
         String query = "" +
                 "SELECT DISTINCT evento, COUNT(evento) AS quantita, AVG(severita) AS mediaSeverita\n" +
@@ -359,7 +348,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         statement.setString(1, nomeCentro);
 
         System.out.println("Query:\n" + statement + "\n");
-        getServerController().getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
+        serverController.getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
 
         ResultSet resultSet = connectDB.selectQuery(statement);
         while (resultSet.next()){
@@ -379,7 +368,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("**** " + remoteClient + " - effettua operazione di ricerca per comune e tipologia ****");
         List<String> listCentri = new ArrayList<>();
 
-        getServerController().getConsoleLogs().appendText(remoteClient + " - effettua operazione di \"Ricerca per comune e tipologia\"\n");
+        serverController.getConsoleLogs().appendText(remoteClient + " - effettua operazione di \"Ricerca per comune e tipologia\"\n");
 
         String query = "" +
                 "SELECT nomecentro\n" +
@@ -393,7 +382,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         statement.setString(2, tipologia);
 
         System.out.println("Query:\n" + statement + "\n");
-        getServerController().getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
+        serverController.getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
 
         ResultSet resultSet = connectDB.selectQuery(statement);
         while (resultSet.next()){
@@ -410,7 +399,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("Richiesta lista dei centri");
         List<String> listaCentri = new ArrayList<>();
 
-        getServerController().getConsoleLogs().appendText("Richiesta lista dei centri\n");
+        serverController.getConsoleLogs().appendText("Richiesta lista dei centri\n");
 
         String query = "" +
                 "SELECT nomecentro\n" +
@@ -420,7 +409,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         PreparedStatement statement = connectDB.getConnection().prepareStatement(query);
 
         System.out.println("Query:\n" + statement + "\n");
-        getServerController().getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
+        serverController.getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
 
         ResultSet resultSet = connectDB.selectQuery(statement);
         while (resultSet.next()){
@@ -435,7 +424,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("Richiesta lista dei codici fiscali");
         List<String> listaCF = new ArrayList<>();
 
-        getServerController().getConsoleLogs().appendText("Richiesta lista Codici Fiscali dalla tabella vaccinati\n");
+        serverController.getConsoleLogs().appendText("Richiesta lista Codici Fiscali dalla tabella vaccinati\n");
 
         String query = "" +
                 "SELECT cf\n" +
@@ -445,7 +434,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         PreparedStatement statement = connectDB.getConnection().prepareStatement(query);
 
         System.out.println("Query:\n" + statement + "\n");
-        getServerController().getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
+        serverController.getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
 
         ResultSet resultSet = connectDB.selectQuery(statement);
         while (resultSet.next()){
@@ -461,7 +450,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("Richiesta lista dei codici fiscali dalla tabella cittadiniregistrati");
         List<String> listaCF = new ArrayList<>();
 
-        getServerController().getConsoleLogs().appendText("Richiesta lista Codici Fiscali dalla tabella cittadiniregistrati\n");
+        serverController.getConsoleLogs().appendText("Richiesta lista Codici Fiscali dalla tabella cittadiniregistrati\n");
 
         String query = "" +
                 "SELECT cf\n" +
@@ -471,7 +460,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         PreparedStatement statement = connectDB.getConnection().prepareStatement(query);
 
         System.out.println("Query:\n" + statement + "\n");
-        getServerController().getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
+        serverController.getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
 
         ResultSet resultSet = connectDB.selectQuery(statement);
         while (resultSet.next()){
@@ -486,7 +475,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("Verifica presenza idVaccinazione: " + idVaccinazione + " dalla tabella delle utenze");
         boolean esisto = false;
 
-        getServerController().getConsoleLogs().appendText("Verifica presenza idVaccinazione: " + idVaccinazione + " dalla tabella delle utenze\n");
+        serverController.getConsoleLogs().appendText("Verifica presenza idVaccinazione: " + idVaccinazione + " dalla tabella delle utenze\n");
 
         String query = "" +
                 "SELECT idvaccinazione\n" +
@@ -499,7 +488,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         statement.setShort(1, idVaccinazione);
 
         System.out.println("Query:\n" + statement + "\n");
-        getServerController().getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
+        serverController.getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
 
         ResultSet resultSet = connectDB.selectQuery(statement);
         if (resultSet.next()){
@@ -515,7 +504,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("Verifica presenza idVaccinazione: " + idVaccinazione + " dalla tabella vaccinati");
         boolean esito = false;
 
-        getServerController().getConsoleLogs().appendText("Verifica presenza idVaccinazione: " + idVaccinazione + " dalla tabella vaccinati\n");
+        serverController.getConsoleLogs().appendText("Verifica presenza idVaccinazione: " + idVaccinazione + " dalla tabella vaccinati\n");
 
         String query = "" +
                 "SELECT idvaccinazione\n" +
@@ -528,7 +517,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         statement.setShort(1, idVaccinazione);
 
         System.out.println("Query:\n" + statement + "\n");
-        getServerController().getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
+        serverController.getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
 
         ResultSet resultSet = connectDB.selectQuery(statement);
         if (resultSet.next()){
@@ -544,7 +533,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("Verifica presenza username: \"" + username + "\"");
         boolean presente = false;
 
-        getServerController().getConsoleLogs().appendText("Verifica presenza username: \"" + username + "\"\n");
+        serverController.getConsoleLogs().appendText("Verifica presenza username: \"" + username + "\"\n");
 
         String query = "" +
                 "SELECT userId\n" +
@@ -557,7 +546,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         statement.setString(1, username);
 
         System.out.println("Query:\n" + statement + "\n");
-        getServerController().getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
+        serverController.getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
 
         ResultSet resultSet = connectDB.selectQuery(statement);
         if(resultSet.next()){
@@ -573,7 +562,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("Richiesta nome del centro per: \"" + username + "\"");
         String centro = null;
 
-        getServerController().getConsoleLogs().appendText("Richiesta nome del centro per: \"" + username + "\"\n");
+        serverController.getConsoleLogs().appendText("Richiesta nome del centro per: \"" + username + "\"\n");
 
         String query = "" +
                 "SELECT nomecentro\n" +
@@ -586,7 +575,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         statement.setString(1, username);
 
         System.out.println("Query:\n" + statement + "\n");
-        getServerController().getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
+        serverController.getConsoleLogs().appendText("Query:\n" + statement + "\n\n");
 
         ResultSet resultSet = connectDB.selectQuery(statement);
         while (resultSet.next()){

@@ -39,14 +39,14 @@ public class ConfigurazioneApplication extends Application {
     public void stop(){
         System.out.println("Entro nello stop() di ConfigurazioneApplication");
         try {
+            if (ConnectDB.getInstance().getConnection() != null) {
+                ConnectDB.getInstance().getConnection().close();
+            }
             if(RunnerRMI.getInstance() != null){
                 if(UnicastRemoteObject.unexportObject(RunnerRMI.getInstance().getServer(), true)){
                     System.out.println("Server chiuso");
                     System.exit(0);
                 }
-            }
-            if (ConnectDB.getInstance().getConnection() != null) {
-                ConnectDB.getInstance().getConnection().close();
             }
         } catch (NoSuchObjectException | SQLException e) {
             e.printStackTrace();

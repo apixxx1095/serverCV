@@ -80,9 +80,6 @@ public class ConfigurazioneController implements Initializable{
     private void configurazioneConnessione(ActionEvent event){
         try {
             ConnectDB.setInstance(hostText.getText(), usernameText.getText(), passwordText.getText());
-            String host = InetAddress.getLocalHost().getHostAddress();
-            int port = 1099;
-            RunnerRMI.setInstance(host, port);
             LoadStage.loadStage(event);
         } catch (SQLException | UnknownHostException e) {
             errorLabel.setTextFill(Color.RED);
