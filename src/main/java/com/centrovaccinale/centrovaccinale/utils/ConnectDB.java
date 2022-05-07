@@ -31,17 +31,15 @@ public class ConnectDB {
      * @param host ip del server
      * @param username username per db
      * @param password password del db.
-     * @return ConnectDB oggetto contenente la connessione al DB
      * @throws SQLException Nel caso in cui ci siano errori di connessione col DB.
      */
-    public static synchronized ConnectDB setInstance(String host, String username, String password) throws SQLException {
+    public static synchronized void setInstance(String host, String username, String password) throws SQLException {
         ConnectDB.dbHost = host;
         ConnectDB.username = username;
         ConnectDB.password = password;
         if(instance == null) {
             instance = new ConnectDB(host, username, password);
         }
-        return instance;
     }
     /**
      * Metodo che restituisce l'istanza dell'oggetto

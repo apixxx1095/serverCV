@@ -1,6 +1,7 @@
 package com.centrovaccinale.centrovaccinale.utils;
 
 
+import com.centrovaccinale.centrovaccinale.grafica.server.controller.ServerController;
 import com.centrovaccinale.centrovaccinale.rmi.ServerImpl;
 
 import java.io.IOException;
@@ -27,9 +28,9 @@ public class RunnerRMI {
     // CAMPI DELLA ISTANZA RunnerRMI
     private ServerImpl server;
     private Registry registry;
-    private RunnerRMI(String host, int port){
+    private RunnerRMI(String host, int port, ServerController serverController){
         try {
-            this.server = new ServerImpl();
+            this.server = new ServerImpl(serverController);
             this.registry = LocateRegistry.createRegistry(port);
             registry.rebind("ServerCentroVaccinale", server);
             System.err.println("Server " + server + " ready.");
@@ -49,12 +50,13 @@ public class RunnerRMI {
      * Imposta la porta del registry.
      * @param host Host del server.
      * @param port Porta del server.
+     * @param serverController
      */
-    public static synchronized void setInstance(String host, int port){
+    public static synchronized void setInstance(String host, int port, ServerController serverController){
         RunnerRMI.host = host;
         RunnerRMI.port = port;
         if(instance == null){
-            instance = new RunnerRMI(host, port);
+            instance = new RunnerRMI(host, port, serverController);
         }else {
             instance = null;
         }
