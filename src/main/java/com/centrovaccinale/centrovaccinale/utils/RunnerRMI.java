@@ -50,7 +50,7 @@ public class RunnerRMI {
      * Imposta la porta del registry.
      * @param host Host del server.
      * @param port Porta del server.
-     * @param serverController
+     * @param serverController Riferimento al controller del server.
      */
     public static synchronized void setInstance(String host, int port, ServerController serverController){
         RunnerRMI.host = host;

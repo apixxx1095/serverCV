@@ -8,9 +8,6 @@ module com.centrovaccinale.centrovaccinale {
     requires java.rmi;
     requires java.sql;
 
-    opens com.centrovaccinale.centrovaccinale to javafx.fxml;
-    exports com.centrovaccinale.centrovaccinale;
-
 
     // APPLICAZIONE CONFIGURAZIONE
     exports com.centrovaccinale.centrovaccinale.grafica.configurazione.controller;
