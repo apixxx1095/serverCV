@@ -47,7 +47,7 @@
             <Font size="14.0" />
          </font>
       </Label>
-      <TextArea fx:id="consoleLogs" editable="false" focusTraversable="false" maxHeight="340.0" prefHeight="340.0" prefWidth="780.0" wrapText="true" VBox.vgrow="ALWAYS">
+      <TextArea fx:id="consoleLogs" cache="true" cacheHint="QUALITY" cacheShape="false" centerShape="false" editable="false" focusTraversable="false" maxHeight="340.0" nodeOrientation="LEFT_TO_RIGHT" pickOnBounds="false" prefHeight="340.0" prefWidth="780.0" scaleShape="false" wrapText="true" VBox.vgrow="ALWAYS">
          <VBox.margin>
             <Insets left="5.0" right="5.0" />
          </VBox.margin>
