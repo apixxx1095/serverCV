@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.centrovaccinale.centrovaccinale.grafica.configurazione.controller.ConfigurazioneController">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="380.0" style="-fx-background-color: #e0e0e0;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.centrovaccinale.centrovaccinale.grafica.configurazione.controller.ConfigurazioneController">
    <children>
       <Label text="Configurazione connessione DB">
          <font>
@@ -16,7 +16,7 @@
          </font></Label>
       <Pane focusTraversable="true" prefHeight="200.0" prefWidth="200.0">
          <children>
-            <Label layoutX="87.0" layoutY="49.0" text="Host Database" />
+            <Label layoutX="87.0" layoutY="49.0" text="Host database" />
             <Label layoutX="110.0" layoutY="88.0" text="Username" />
             <Label layoutX="114.0" layoutY="126.0" text="Password" />
             <Label fx:id="errorLabel" alignment="CENTER" layoutX="6.0" layoutY="169.0" prefHeight="20.0" prefWidth="366.0" />
@@ -25,7 +25,7 @@
             <PasswordField fx:id="passwordText" layoutX="179.0" layoutY="122.0" onKeyPressed="#keyEvent" />
          </children>
       </Pane>
-      <Button fx:id="configuraBtn" disable="true" mnemonicParsing="false" onAction="#configurazioneConnessione" text="Configura">
+      <Button fx:id="configuraBtn" disable="true" mnemonicParsing="false" onAction="#configurazioneConnessione" text="Configura" style="-fx-background-color: #a2d1e8;">
          <font>
             <Font size="14.0" />
          </font></Button>

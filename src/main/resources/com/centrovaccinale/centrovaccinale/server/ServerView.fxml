@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.centrovaccinale.centrovaccinale.grafica.server.controller.ServerController">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" spacing="5.0" style="-fx-background-color: #e0e0e0;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.centrovaccinale.centrovaccinale.grafica.server.controller.ServerController">
    <children>
       <Label text="SERVER">
          <font>
@@ -52,7 +52,7 @@
             <Insets left="5.0" right="5.0" />
          </VBox.margin>
       </TextArea>
-      <Button fx:id="btnPulisciConsole" mnemonicParsing="false" text="Pulisci Console">
+      <Button fx:id="btnPulisciConsole" mnemonicParsing="false" text="Pulisci console" style="-fx-background-color: #ffffff; -fx-border-color: #a6a6a6;">
          <VBox.margin>
             <Insets bottom="10.0" />
          </VBox.margin>
