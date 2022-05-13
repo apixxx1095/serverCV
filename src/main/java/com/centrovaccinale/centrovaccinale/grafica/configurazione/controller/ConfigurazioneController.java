@@ -2,7 +2,6 @@ package com.centrovaccinale.centrovaccinale.grafica.configurazione.controller;
 
 import com.centrovaccinale.centrovaccinale.utils.ConnectDB;
 import com.centrovaccinale.centrovaccinale.utils.LoadStage;
-import com.centrovaccinale.centrovaccinale.utils.RunnerRMI;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,7 +14,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
