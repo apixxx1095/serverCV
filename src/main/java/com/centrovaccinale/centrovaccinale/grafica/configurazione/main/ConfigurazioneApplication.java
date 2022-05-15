@@ -40,7 +40,7 @@ public class ConfigurazioneApplication extends Application {
         System.out.println("Entro nello stop() di ConfigurazioneApplication");
         try {
             if (ConnectDB.getInstance().getConnection() != null) {
-                ConnectDB.getInstance().getConnection().close();
+                ConnectDB.getInstance().closeConnection();
             }
             if(RunnerRMI.getInstance() != null){
                 if(UnicastRemoteObject.unexportObject(RunnerRMI.getInstance().getServer(), true)){

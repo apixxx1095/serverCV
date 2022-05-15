@@ -28,18 +28,23 @@ public class ConnectDB {
      * Questo metodo restituisce un'istanza di un oggetto contenente
      * il riferimento alla connessione con il Database.
      * Questo metodo server per impostare i parametri di connessione al DB.
-     * @param host ip del server
-     * @param username username per db
+     * @param host ip del server.
+     * @param username username per db.
      * @param password password del db.
-     * @throws SQLException Nel caso in cui ci siano errori di connessione col DB.
+     * @return Singleton contenente connessione del DB.
      */
-    public static synchronized void setInstance(String host, String username, String password) throws SQLException {
-        ConnectDB.dbHost = host;
-        ConnectDB.username = username;
-        ConnectDB.password = password;
-        if(instance == null) {
-            instance = new ConnectDB(host, username, password);
+    public static synchronized ConnectDB setInstance(String host, String username, String password){
+        try{
+            if(instance == null) {
+                instance = new ConnectDB(host, username, password);
+                ConnectDB.dbHost = host;
+                ConnectDB.username = username;
+                ConnectDB.password = password;
+            }
+        } catch (SQLException e) {
+            return null;
         }
+        return instance;
     }
     /**
      * Metodo che restituisce l'istanza dell'oggetto

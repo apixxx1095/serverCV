@@ -2,6 +2,8 @@ package com.centrovaccinale.centrovaccinale.grafica.configurazione.controller;
 
 import com.centrovaccinale.centrovaccinale.utils.ConnectDB;
 import com.centrovaccinale.centrovaccinale.utils.LoadStage;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,27 +11,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ConfigurazioneController implements Initializable{
-    private static final String IPV4_REGEX =
-            "^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
-                    "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
-                    "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
-                    "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
-
-    private static final Pattern IPv4_PATTERN = Pattern.compile(IPV4_REGEX);
-
     @FXML
     private TextField hostText;
     @FXML
@@ -45,22 +34,11 @@ public class ConfigurazioneController implements Initializable{
     private void keyEvent(KeyEvent keyEvent){
         Object evt = keyEvent.getSource();
         if(evt.equals(hostText)){
-            if(keyEvent.getCode() == KeyCode.SPACE || keyEvent.getCode() == KeyCode.TAB){
-                keyEvent.consume();
-            }
-            else if(hostText.getText().concat(keyEvent.getText()).equals("localhost") || isValidInet4Address(hostText.getText())) {
-                errorLabel.setTextFill(Color.GREEN);
-                errorLabel.setText("Formato IP corretto");
-                configuraBtn.setDisable((usernameText.getText().isEmpty()) && (passwordText.getText().isEmpty()));
-            }
-            else if(hostText.getText().isEmpty()){
+            if(hostText.getText().isEmpty() || passwordText.getText().isEmpty()){
                 errorLabel.setText("");
                 configuraBtn.setDisable(true);
-            }
-            else{
-                errorLabel.setTextFill(Color.RED);
-                errorLabel.setText("IP inserito non ha un formato corretto!");
-                configuraBtn.setDisable(true);
+            }else{
+                configuraBtn.setDisable(false);
             }
 
         }
@@ -76,29 +54,36 @@ public class ConfigurazioneController implements Initializable{
 
     @FXML
     private void configurazioneConnessione(ActionEvent event){
-        try {
-            ConnectDB.setInstance(hostText.getText(), usernameText.getText(), passwordText.getText());
-            LoadStage.loadStage(event);
-        } catch (SQLException | UnknownHostException e) {
-            errorLabel.setTextFill(Color.RED);
-            errorLabel.setText(e.getMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        errorLabel.setText("");
+        Task<ConnectDB> task = new Task<>() {
+            @Override
+            protected ConnectDB call() {
+                return ConnectDB.setInstance(hostText.getText(), usernameText.getText(), passwordText.getText());
+            }
+        };
+
+        errorLabel.setTextFill(Color.GREEN);
+        errorLabel.setText("Connessione al DB in corso...");
+
+        new Thread(task).start();
+
+        task.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, workerStateEvent -> {
+            if(task.getValue() != null){
+                try {
+                    LoadStage.loadStage(event);
+                } catch (IOException e) {
+                    errorLabel.setTextFill(Color.RED);
+                    errorLabel.setText(e.getMessage());
+                }
+            }else{
+                errorLabel.setTextFill(Color.RED);
+                errorLabel.setText("Errore: controlla che l'host, username e password siano corretti!");
+            }
+        });
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         errorLabel.setText("");
-    }
-
-
-    private boolean isValidInet4Address(String ip) {
-        if (ip == null) {
-            return false;
-        }
-        Matcher matcher = IPv4_PATTERN.matcher(ip);
-
-        return matcher.matches();
     }
 }
