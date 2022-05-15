@@ -65,6 +65,9 @@ public class ServerController implements Initializable {
 
     public synchronized void cleanConsole(){
         System.out.println("Eseguo cleanConsole()\n");
+        int caretPosition = consoleLogs.caretPositionProperty().get();
         consoleLogs.setText("");
+        consoleLogs.appendText("");
+        consoleLogs.positionCaret(caretPosition);
     }
 }
