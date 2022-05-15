@@ -1,6 +1,10 @@
 package com.centrovaccinale.centrovaccinale.grafica.server.controller;
 
 import com.centrovaccinale.centrovaccinale.utils.RunnerRMI;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -29,8 +33,18 @@ public class ServerController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             counter.setText("0");
-            consoleLogs.textProperty().addListener((observableValue, s, t1) -> consoleLogs.setScrollTop(Double.MAX_VALUE));
-            btnPulisciConsole.setOnAction(actionEvent -> cleanConsole());
+            consoleLogs.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                    consoleLogs.setScrollTop(Double.MAX_VALUE);
+                }
+            });
+            btnPulisciConsole.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    cleanConsole();
+                }
+            });
             String host = InetAddress.getLocalHost().getHostAddress();
             int port = 1099;
             RunnerRMI.setInstance(host, port, this);
